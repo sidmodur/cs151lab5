@@ -51,7 +51,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
    private ListNode getNthNode(int n) {
       if (n < 0 || n >= size) {
     	  throw new IndexOutOfBoundsException();
-      } else {
+      }
+      else {
     	  ListNode node = header.next;
     	  for (int i = 0; i < n; i++) {
     		  node = node.next;
@@ -97,6 +98,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
+       size++;
        return true;
    }
    
@@ -109,6 +111,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   }
        ListNode prior = getNthNode(position - 1);
        prior.next = new ListNode(data, prior, prior.next);
+       size++;
    }
    
    /*
@@ -118,6 +121,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
       ListNode toDel = getNthNode(index);
       toDel.prior.next = toDel.next;
       toDel.next.prior = toDel.prior;
+      size--;
       return toDel.datum;
    }
    
