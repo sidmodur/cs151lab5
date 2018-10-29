@@ -9,8 +9,9 @@
 import java.util.*;
 
 public class DoublyLinkedList<T> extends AbstractList<T> {
-   int size;
-   ListNode header, trailer;
+	int modCount;
+    int size;
+    ListNode header, trailer;
    
    /*
     * ListNode
@@ -43,6 +44,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
        header = new ListNode();
        trailer = new ListNode();
        clear();
+       modCount = 0;
    }
    
    /*
@@ -96,6 +98,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   if (data == null) {
 		   throw new NullPointerException();
 	   }
+	   modCount++;
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
        return true;
    }
@@ -107,6 +110,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   if (data == null) {
 		   throw new NullPointerException();
 	   }
+	   modCount++;
        ListNode prior = getNthNode(position - 1);
        prior.next = new ListNode(data, prior, prior.next);
    }
@@ -116,6 +120,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     */
    public T remove(int index) {
       ListNode toDel = getNthNode(index);
+      modCount++;
       toDel.prior.next = toDel.next;
       toDel.next.prior = toDel.prior;
       return toDel.datum;
@@ -159,12 +164,58 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
       return size==0;
    }
    
+   class DLLIterator implements Iterator<T> {
+	   ListNode currNode;
+	   DoublyLinkedList<T> dll;
+	   int modCount;
+	   boolean nextCalled;
+	   
+	   private DLLIterator(DoublyLinkedList<T> lst) {
+		   dll = lst;
+		   currNode = dll.header.next;
+		   modCount = dll.modCount;
+		   nextCalled = false;
+	   }
+	   
+	   private void checkConcurrency() {
+		   if (modCount != dll.modCount) {
+			   throw new ConcurrentModificationException();
+		   }
+	   }
+	   
+	   public boolean hasNext() {
+		   checkConcurrency();
+		   return (currNode.next != dll.trailer);
+	   }
+	   
+	   public T next() {
+		   if (!hasNext()) {
+			   throw new NoSuchElementException();
+		   }
+		   currNode = currNode.next;
+		   nextCalled = true;
+		   return currNode.prior.datum;
+	   }
+	   
+	   public void remove() {
+		   if (!nextCalled) {
+			   throw new IllegalStateException();
+		   }
+		   checkConcurrency();
+		   ListNode toDel = currNode.prior;
+		   currNode.next = toDel.next;
+		   currNode.prior = toDel.prior;
+		   modCount++;
+		   dll.modCount++;
+		   nextCalled = false;
+	   }
+   }
+   
    /*
     * Returns an iterator for this list
     */
    public Iterator<T> iterator(){
-       // TODO: Write the iterator method
-       return null;  /* replace this line */
+	   return new DLLIterator(this);
    }
 }
 
