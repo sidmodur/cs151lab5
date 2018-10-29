@@ -80,6 +80,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     * that is replaced.
     */
    public T set(int position, T data) {
+	   if (data == null) {
+		   throw new NullPointerException();
+	   }
        ListNode node = getNthNode(position);
        T oldElem = node.datum;
        node.datum = data;
@@ -90,16 +93,22 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     * Inserts the given data item at the end of the list.
     */
    public boolean add(T data) {
-      trailer.prior.next = new ListNode(data, trailer.prior, trailer);
-      return true;
+	   if (data == null) {
+		   throw new NullPointerException();
+	   }
+       trailer.prior.next = new ListNode(data, trailer.prior, trailer);
+       return true;
    }
    
    /*
     * Inserts the given data item at the given position in the list.
     */
    public void add(int position, T data) {
-      ListNode prior = getNthNode(position - 1);
-      prior.next = new ListNode(data, prior, prior.next);
+	   if (data == null) {
+		   throw new NullPointerException();
+	   }
+       ListNode prior = getNthNode(position - 1);
+       prior.next = new ListNode(data, prior, prior.next);
    }
    
    /*
