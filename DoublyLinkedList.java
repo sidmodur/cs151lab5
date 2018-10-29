@@ -40,18 +40,24 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     * Constructs an empty list.
     */
    DoublyLinkedList(){
-       /* TODO:  Write a constructor here      
-	  The empty list has two sentinel nodes, a header and a
-	  trailer, linked to each other
-       */
+       header = new ListNode();
+       trailer = new ListNode();
+       clear();
    }
    
    /*
     * Returns a reference to the nth node in the list.
     */
    private ListNode getNthNode(int n) {
-       /* TODO:  Write the getNthNode method  */
-       return null;  // replace this line
+      if (n < 0 || n >= size) {
+    	  throw new IndexOutOfBoundsException();
+      } else {
+    	  ListNode node = header.next;
+    	  for (int i = 0; i < n; i++) {
+    		  node = node.next;
+    	  }
+    	  return node;
+      }
    }
    
    /*
@@ -65,8 +71,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     * Returns the data item at the given position in the list.
     */
    public T get(int position) {
-       // TODO: Write the get method
-       return null; // replace this to return the element at given position
+      return getNthNode(position).datum;
    }
    
    /*
@@ -75,54 +80,67 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     * that is replaced.
     */
    public T set(int position, T data) {
-       // TODO: Write the set method
-       return null; // replace this so the replaced element is returned
+       ListNode node = getNthNode(position);
+       T oldElem = node.datum;
+       node.datum = data;
+       return oldElem;
    }
    
    /*
     * Inserts the given data item at the end of the list.
     */
    public boolean add(T data) {
-      // TODO: Write a method to add data to the end of the list
-       return true;
+      trailer.prior.next = new ListNode(data, trailer.prior, trailer);
+      return true;
    }
    
    /*
     * Inserts the given data item at the given position in the list.
     */
    public void add(int position, T data) {
-      // TODO: Write a method to add data at the given position in the list
+      ListNode prior = getNthNode(position - 1);
+      prior.next = new ListNode(data, prior, prior.next);
    }
    
    /*
     * Removes the element at a given index in the list.
     */
    public T remove(int index) {
-       // TODO: Write the remove method
-       return null;  // replace this line so the removed item is returned
+      ListNode toDel = getNthNode(index);
+      toDel.prior.next = toDel.next;
+      toDel.next.prior = toDel.prior;
+      return toDel.datum;
    }
    
    /*
     * Searches the list for the given object
     */
    public boolean contains(Object obj){
-       // TODO: Write the contains method
-       return false; // replace this line to return the result of the search
+       return (indexOf(obj) != -1);
    }
    
    /*
     * Returns the position of the given object
     */
    public int indexOf(Object obj){
-       // TODO: Write the contains method
-       return -1; // replace this line to return the position of obj
+       int index = 0;
+       ListNode node = header.next;
+       for (; node != trailer; node = node.next) {
+    	   if (obj.equals(node.datum)) {
+    		   return index;
+    	   }
+    	   index++;
+       }
+       return -1;
    }
    
    /*
     * Deletes all elements from the list.
     */
    public void clear() {
-       // TODO: Write the clear method
+       header.next = trailer;
+       trailer.prior = header;
+       size = 0;
    }
    
    /*
