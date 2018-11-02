@@ -43,8 +43,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
    DoublyLinkedList(){
        header = new ListNode();
        trailer = new ListNode();
-       clear();
        modCount = 0;
+       emptyList();
    }
    
    /*
@@ -98,9 +98,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   if (data == null) {
 		   throw new NullPointerException();
 	   }
-	   modCount++;
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
        trailer.prior = trailer.prior.next;
+       modCount++;
        return true;
    }
    
@@ -111,10 +111,10 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   if (data == null) {
 		   throw new NullPointerException();
 	   }
-	   modCount++;
        ListNode prior = getNthNode(position - 1);
        ListNode newNode = new ListNode(data, prior, prior.next);
        prior.next = newNode.next.prior = newNode;
+       modCount++;
    }
    
    /*
@@ -150,13 +150,18 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
        return -1;
    }
    
+   private void emptyList() {
+       header.next = trailer;
+       trailer.prior = header;
+       size = 0;
+   }
+   
    /*
     * Deletes all elements from the list.
     */
    public void clear() {
-       header.next = trailer;
-       trailer.prior = header;
-       size = 0;
+	   emptyList();
+       modCount++;
    }
    
    /*
@@ -174,7 +179,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   
 	   private DLLIterator(DoublyLinkedList<T> lst) {
 		   dll = lst;
-		   currNode = dll.header.next;
+		   currNode = dll.header;
 		   modCount = dll.modCount;
 		   nextCalled = false;
 	   }
@@ -196,7 +201,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   }
 		   currNode = currNode.next;
 		   nextCalled = true;
-		   return currNode.prior.datum;
+		   return currNode.datum;
 	   }
 	   
 	   public void remove() {
@@ -205,8 +210,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   }
 		   checkConcurrency();
 		   ListNode toDel = currNode.prior;
-		   currNode.next = toDel.next;
-		   currNode.prior = toDel.prior;
+		   toDel.next.prior = toDel.prior;
+		   toDel.prior.next = toDel.next;
 		   modCount++;
 		   dll.modCount++;
 		   nextCalled = false;
