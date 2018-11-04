@@ -9,8 +9,9 @@
 import java.util.*;
 
 public class DoublyLinkedList<T> extends AbstractList<T> {
-   int size;
-   ListNode header, trailer;
+	int modCount;
+    int size;
+    ListNode header, trailer;
    
    /*
     * ListNode
@@ -42,7 +43,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
    DoublyLinkedList(){
        header = new ListNode();
        trailer = new ListNode();
-       clear();
+       modCount = 0;
+       emptyList();
    }
    
    /*
@@ -98,7 +100,12 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
+<<<<<<< HEAD
        size++;
+=======
+       trailer.prior = trailer.prior.next;
+       modCount++;
+>>>>>>> master
        return true;
    }
    
@@ -110,8 +117,14 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        ListNode prior = getNthNode(position - 1);
+<<<<<<< HEAD
        prior.next = new ListNode(data, prior, prior.next);
        size++;
+=======
+       ListNode newNode = new ListNode(data, prior, prior.next);
+       prior.next = newNode.next.prior = newNode;
+       modCount++;
+>>>>>>> master
    }
    
    /*
@@ -119,6 +132,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     */
    public T remove(int index) {
       ListNode toDel = getNthNode(index);
+      modCount++;
       toDel.prior.next = toDel.next;
       toDel.next.prior = toDel.prior;
       size--;
@@ -147,13 +161,18 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
        return -1;
    }
    
+   private void emptyList() {
+       header.next = trailer;
+       trailer.prior = header;
+       size = 0;
+   }
+   
    /*
     * Deletes all elements from the list.
     */
    public void clear() {
-       header.next = trailer;
-       trailer.prior = header;
-       size = 0;
+	   emptyList();
+       modCount++;
    }
    
    /*
@@ -163,12 +182,58 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
       return size==0;
    }
    
+   class DLLIterator implements Iterator<T> {
+	   ListNode currNode;
+	   DoublyLinkedList<T> dll;
+	   int modCount;
+	   boolean nextCalled;
+	   
+	   private DLLIterator(DoublyLinkedList<T> lst) {
+		   dll = lst;
+		   currNode = dll.header;
+		   modCount = dll.modCount;
+		   nextCalled = false;
+	   }
+	   
+	   private void checkConcurrency() {
+		   if (modCount != dll.modCount) {
+			   throw new ConcurrentModificationException();
+		   }
+	   }
+	   
+	   public boolean hasNext() {
+		   checkConcurrency();
+		   return (currNode.next != dll.trailer);
+	   }
+	   
+	   public T next() {
+		   if (!hasNext()) {
+			   throw new NoSuchElementException();
+		   }
+		   currNode = currNode.next;
+		   nextCalled = true;
+		   return currNode.datum;
+	   }
+	   
+	   public void remove() {
+		   if (!nextCalled) {
+			   throw new IllegalStateException();
+		   }
+		   checkConcurrency();
+		   ListNode toDel = currNode.prior;
+		   toDel.next.prior = toDel.prior;
+		   toDel.prior.next = toDel.next;
+		   modCount++;
+		   dll.modCount++;
+		   nextCalled = false;
+	   }
+   }
+   
    /*
     * Returns an iterator for this list
     */
    public Iterator<T> iterator(){
-       // TODO: Write the iterator method
-       return null;  /* replace this line */
+	   return new DLLIterator(this);
    }
 }
 

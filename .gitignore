@@ -2,4 +2,8 @@
 /DoublyLinkedList.class
 /ListTimer.class
 /MRUList.class
+<<<<<<< HEAD
 /DoublyLinkedListTest.class
+=======
+/DoublyLinkedList$DLLIterator.class
+>>>>>>> master
