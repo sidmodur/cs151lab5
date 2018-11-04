@@ -101,6 +101,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
        trailer.prior = trailer.prior.next;
        modCount++;
+       size++;
        return true;
    }
    
@@ -115,6 +116,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
        ListNode newNode = new ListNode(data, prior, prior.next);
        prior.next = newNode.next.prior = newNode;
        modCount++;
+       size++;
    }
    
    /*
@@ -125,6 +127,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
       modCount++;
       toDel.prior.next = toDel.next;
       toDel.next.prior = toDel.prior;
+      size--;
       return toDel.datum;
    }
    
