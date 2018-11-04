@@ -100,12 +100,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
-<<<<<<< HEAD
        size++;
-=======
        trailer.prior = trailer.prior.next;
        modCount++;
->>>>>>> master
        return true;
    }
    
@@ -117,14 +114,11 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        ListNode prior = getNthNode(position - 1);
-<<<<<<< HEAD
        prior.next = new ListNode(data, prior, prior.next);
        size++;
-=======
        ListNode newNode = new ListNode(data, prior, prior.next);
        prior.next = newNode.next.prior = newNode;
        modCount++;
->>>>>>> master
    }
    
    /*
