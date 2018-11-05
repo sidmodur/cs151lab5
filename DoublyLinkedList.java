@@ -53,8 +53,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
    private ListNode getNthNode(int n) {
       if (n < 0 || n >= size) {
     	  throw new IndexOutOfBoundsException();
-      }
-      else {
+      } else {
     	  ListNode node = header.next;
     	  for (int i = 0; i < n; i++) {
     		  node = node.next;
@@ -100,8 +99,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   throw new NullPointerException();
 	   }
        trailer.prior.next = new ListNode(data, trailer.prior, trailer);
-       size++;
        trailer.prior = trailer.prior.next;
+       size++;
        modCount++;
        return true;
    }
@@ -113,12 +112,14 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 	   if (data == null) {
 		   throw new NullPointerException();
 	   }
-       ListNode prior = getNthNode(position - 1);
-       prior.next = new ListNode(data, prior, prior.next);
-       size++;
+	   ListNode prior = header;
+	   if (position != 0) {
+		   prior = getNthNode(position - 1);
+	   }
        ListNode newNode = new ListNode(data, prior, prior.next);
        prior.next = newNode.next.prior = newNode;
        modCount++;
+       size++;
    }
    
    /*
@@ -126,9 +127,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     */
    public T remove(int index) {
       ListNode toDel = getNthNode(index);
-      modCount++;
       toDel.prior.next = toDel.next;
       toDel.next.prior = toDel.prior;
+      modCount++;
       size--;
       return toDel.datum;
    }
@@ -215,7 +216,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
 		   }
 		   checkConcurrency();
 		   ListNode toDel = currNode.prior;
-		   toDel.next.prior = toDel.prior;
+		   currNode.prior = toDel.prior;
 		   toDel.prior.next = toDel.next;
 		   modCount++;
 		   dll.modCount++;
