@@ -16,6 +16,19 @@ class MRUList<T> extends DoublyLinkedList<T> {
     	throw new UnsupportedOperationException();
     }
     
+    public boolean contains(Object obj) {
+    	int index = 0;
+        ListNode node = header.next;
+        for (; node != trailer; node = node.next) {
+     	   if (obj.equals(node.datum)) {
+     		   moveToFront(node);
+     		   return index;
+     	   }
+     	   index++;
+        }
+        return false; 
+    }
+    
     public int indexOf(Object obj) {
         int index = 0;
         ListNode node = header.next;

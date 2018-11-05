@@ -136,7 +136,7 @@ public class DoublyLinkedListTest {
 	}
 	
 	@Test
-	public void testRemove() {
+	public void testRemoveIterator() {
 		DoublyLinkedList <Integer> test = new DoublyLinkedList <Integer>();
 		for ( int i = 1; i < 20; i++) {
 			test.add(i);
@@ -146,9 +146,14 @@ public class DoublyLinkedListTest {
 			int next = cycler.next();
 			if(next % 3 == 0)
 				cycler.remove();
-			else System.out.println(next);
+		}
+		Iterator<Integer> it = test.iterator();
+		while(it.hasNext()) {
+			System.out.println(it.next());
 		}
 	}
+	
+	
 }
 
 
